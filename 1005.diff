@@ -1,0 +1,12 @@
+diff --git a/administrator/components/com_banners/helpers/banners.php b/administrator/components/com_banners/helpers/banners.php
+index aa3b2ab..dacc070 100644
+--- a/administrator/components/com_banners/helpers/banners.php
++++ b/administrator/components/com_banners/helpers/banners.php
+@@ -194,6 +194,7 @@ public static function getClientOptions()
+ 		$query = $db->getQuery(true)
+ 			->select('id As value, name As text')
+ 			->from('#__banner_clients AS a')
++			->where('a.state=1');
+ 			->order('a.name');
+ 
+ 		// Get the options.
