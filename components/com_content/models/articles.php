@@ -323,8 +323,15 @@ class ContentModelArticles extends JModelList
 					$subQuery->where('sub.level <= this.level + '.$levels);
 				}
 
-				// Add the subquery to the main query
-				$query->where('('.$categoryEquals.' OR a.catid IN ('.$subQuery->__toString().'))');
+				$db->setQuery($subQuery);
+				$sub_result = $db->loadRowList();
+				$subcat_ids = array();
+				foreach ($sub_result as $subcat){
+				  $subcat_ids[] = $subcat[0];
+				}
+
+				// Add the results to the main query
+				$query->where('('.$categoryEquals.' OR a.catid IN ('.implode(",",$subcat_ids).'))');
 			}
 			else {
 				$query->where($categoryEquals);
