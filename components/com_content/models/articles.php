@@ -330,8 +330,14 @@ class ContentModelArticles extends JModelList
 				  $subcat_ids[] = $subcat[0];
 				}
 
-				// Add the results to the main query
-				$query->where('('.$categoryEquals.' OR a.catid IN ('.implode(",",$subcat_ids).'))');
+				// Don't break the SQL by imploding an empty array
+				if (count($subcat_ids) > 0){
+				// Add the subquery to the main query
+				  $query->where('('.$categoryEquals.' OR a.catid IN ('.implode(",",$subcat_ids).'))');
+				}else{
+				  $query->where($categoryEquals);
+				}
+				
 			}
 			else {
 				$query->where($categoryEquals);
