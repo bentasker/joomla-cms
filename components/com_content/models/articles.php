@@ -414,8 +414,7 @@ class ContentModelArticles extends JModelList
 		$nullDate	= $db->Quote($db->getNullDate());
 		$nowDate	= $db->Quote(JFactory::getDate()->toSql());
 
-		$query->where('(a.publish_up = '.$nullDate.' OR a.publish_up <= '.$nowDate.')');
-		$query->where('(a.publish_down = '.$nullDate.' OR a.publish_down >= '.$nowDate.')');
+
 
 		// Filter by Date Range or Relative Date
 		$dateFiltering = $this->getState('filter.date_filtering', 'off');
@@ -428,18 +427,31 @@ class ContentModelArticles extends JModelList
 				$endDateRange = $db->Quote($this->getState('filter.end_date_range', $nullDate));
 				$query->where('('.$dateField.' >= '.$startDateRange.' AND '.$dateField .
 					' <= '.$endDateRange.')');
+
+
+				$checkPublishRange = true;
 				break;
 
 			case 'relative':
 				$relativeDate = (int) $this->getState('filter.relative_date', 0);
 				$query->where($dateField.' >= DATE_SUB('.$nowDate.', INTERVAL ' .
 					$relativeDate.' DAY)');
+				$checkPublishRange = true;
 				break;
 
 			case 'off':
+				$checkPublishRange = false;
+				break;
 			default:
 				break;
 		}
+
+
+		if ($checkPublishRange){
+		  $query->where('(a.publish_up = '.$nullDate.' OR a.publish_up <= '.$nowDate.')');
+		  $query->where('(a.publish_down = '.$nullDate.' OR a.publish_down >= '.$nowDate.')');
+		}
+
 
 		// process the filter for list views with user-entered filters
 		$params = $this->getState('params');
